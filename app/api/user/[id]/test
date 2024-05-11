@@ -1,0 +1,100 @@
+route
+await prisma.$queryRaw`SELECT id,fname ,lname ,tel ,position ,salary ,DATE_FORMAT(datestartwork, '%Y-%m-%d') AS datestartwork from user where id=${userid}`
+
+page
+const [data, setdata] = useState<any>([]);
+const fetchPost = async (id: Number) => {
+    try {
+      const res = await axios.get(`/api/user/${id}`)
+      setdata(res.data);
+      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (id) {
+      fetchPost(parseInt(id))
+    }
+  }, [id])
+
+  return (
+    <div>
+      
+      <h1 className="text-2xl font-semibold mb-6">Edit Post {id}</h1>
+      data.map((item) => (
+      <div key={item.id}>
+      <form onSubmit={handleUpdate} className="space-y-0">
+            <div className='space-x-5'>
+              ชื่อ
+              <input 
+              autoComplete='name'
+              className='border-solid border-2 border-black ml-3 space-x-5' 
+              title='fname'
+              value={fname}
+              onChange={(e:any)=>setdata({...data,fname:e.target.value})}
+              />
+            </div>
+            <div className='space-x-5'>
+              นามสกุล
+              <input 
+              autoComplete='name'
+              className='border-solid border-2 border-black ml-3 space-x-5'  
+              title='lname'
+              value={lname}
+              onChange={(e:any)=>setdata(e.target.value)}
+              />
+            </div>
+            <div className='space-x-5'>
+              เบอร์โทร
+              <input 
+              autoComplete=''
+              className='border-solid border-2 border-black ml-3 mr-25%' 
+              title='tel'
+              value={tel}
+              onChange={(e:any)=>setdata(e.target.value)}
+              />
+            </div>
+            <div className='space-x-5'>
+              ตำแหน่ง
+              <input 
+              className='border-solid border-2 border-black ml-3 space-x-5' 
+              title='position'
+              value={item.position}
+              onChange={(e:any)=>setdata(e.target.value)}
+              />
+            </div>
+            <div className='space-x-5'>
+              <label>วันที่เริ่มงาน เดิม</label> 
+              <input 
+              type='date'
+              className='border-solid border-2 border-black ml-3 space-x-5' 
+              title='datestartwork'
+              value={item.datestartwork}
+              onChange={(e:any)=>setdata(e.target.valueAsDate)}
+              />
+            </div>
+            <div className='space-x-5'>
+              เงินเดือน
+              <input 
+              type='number'
+              className='border-solid border-2 border-black ml-3 space-x-5' 
+              title='salary'
+              value={item.salary}
+              onChange={(e:any)=>{setdata(e.target.valueAsNumber)}}
+              />
+            </div>
+        <div>
+          <button
+            type="submit"
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Update
+          </button>
+        </div>
+      </form>
+      </div>
+      ))
+    </div>
+  )
