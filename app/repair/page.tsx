@@ -10,7 +10,7 @@ const building = [
     {id:1,name:'ใบบัว'},
     {id:2,name:'ไชยรัช'},
     {id:3,name:'PK53'},
-    {id:4,name:'เอสเค'}
+    {id:4,name:'อิอิ'}
 ]
 const [repair,setrepair] = useState([{
     repairplace:'',
