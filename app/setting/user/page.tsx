@@ -3,13 +3,22 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import { useEffect } from 'react'
+import { URLSearchParams } from 'url'
 
 export default function Home() {
   const [user,setuser] = useState([])
+  const [search, setsearch] = useState('')
+  const [position, setposition] = useState('')
+  const [sort, setsort] = useState('desc')  
+
 
   const fetchUser = async() =>{
   try {
-    const response = await axios.get('/api/user');
+    
+      const response = await axios.get(`/api/user?search=${search}&position=${position}&sort=${sort}`);
+      /* ใช้กับ url ภาษาไทยไม่ได้
+      const query = new URLSearchParams({search,position,sort})
+      const response = await axios.get(`/api/user?${query}`)*/
     setuser(response.data)
   } catch (error) {
     console.log('error',error);
@@ -18,11 +27,53 @@ export default function Home() {
   useEffect(() => {
     fetchUser();
   }, [])
+  const handleSearch=()=>{
+    fetchUser()
+    
+  }
+
   
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-semibold mb-6">Blog Posts</h1>
-      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            value={search}
+            onChange={(e) => setsearch(e.target.value)}
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <select
+            title='position'
+            value={position}
+            onChange={(e) => setposition(e.target.value)}
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">Select position</option>
+            <option value="ฝ่ายขาย">ฝ่ายขาย</option>
+            <option value="คนขายขนมปัง">คนขายขนมปัง</option>
+            <option value="superviser">superviser</option>
+          </select>
+          <select
+          title='sort'
+            value={sort}
+            onChange={(e) => setsort(e.target.value)}
+            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="desc">Latest</option>
+            <option value="asc">Oldest</option>
+          </select>
+          <button
+            onClick={handleSearch}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+          >
+            Apply
+          </button>
+        </div>
+      </div>
+      <div className="shadow overflow-hi dden border-b border-gray-200 sm:rounded-lg">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -48,6 +99,12 @@ export default function Home() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                salary
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Actions
               </th>
             </tr>
@@ -68,6 +125,11 @@ export default function Home() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
                     {user.position}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">
+                    {user.salary}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

@@ -109,7 +109,7 @@ const Edit = ({ params }: { params: { id: any } }) => {
               />
             </div>
             <div className='space-x-5'>
-              <label>วันที่เริ่มงาน เดิม{datestartwork}</label> 
+              <label>วันที่เริ่มงาน</label> 
               <input 
               type='date'
               className='border-solid border-2 border-black ml-3 space-x-5' 
