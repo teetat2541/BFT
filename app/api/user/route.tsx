@@ -10,7 +10,11 @@ export async function GET(res:NextRequest) {
     const sort = searchParams.get('sort') || 'desc'
     let whereCondition = position
         ? {
-            position,
+            position:{
+              is:{
+                name:position,
+              },
+            },
             fname:{
                 contains:search
             },
@@ -23,8 +27,11 @@ export async function GET(res:NextRequest) {
 
     const user = await prisma.user.findMany({
         where:whereCondition,
+        include: {
+          position: true, // Include category data in the response
+        },
         orderBy:{
-            datestartwork:sort,
+            id:sort,
         }as any
     })
     return Response.json(user)
@@ -33,13 +40,13 @@ export async function GET(res:NextRequest) {
   }
   
   export async function POST(request: Request) {
-    const {fname,lname,tel,position,salary,datestartwork} = await request.json()
+    const {fname,lname,tel,positionId,salary,datestartwork} = await request.json()
     const newuser = await prisma.user.create({
         data:{
             fname,
             lname,
             tel,
-            position,
+            positionId: Number(positionId),
             salary,
             datestartwork
         }
@@ -48,5 +55,18 @@ export async function GET(res:NextRequest) {
     })
     return Response.json(newuser)
 }
-        
+export async function DELETE(
+    req: Request,
+    { params }: { params: { id: string } },
+  ) {
+    try {
+      return Response.json(await prisma.user.delete({
+        where: { id: Number(params.id) },
+      }))
+    } catch (error) {
+      return new Response(error as BodyInit, {
+        status: 500,
+      })
+    }
+  }
       

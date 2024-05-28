@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 
@@ -8,21 +8,33 @@ const Create = () => {
   const [fname, setfname] = useState('')
   const [lname, setlname] = useState('')
   const [tel, settel] = useState('')
-  const [position, setposition] = useState('')
+  const [positionId, setpositionId] = useState('')
   const [datestartwork, setdatestartwork] = useState()
+  const [allPositon, setAllpositions] = useState([])
   const [salary, setsalary] = React.useState<Number>(0)
   const router = useRouter()
+  const fetchPosition = async() =>{
+    try {
+        const response = await axios.get(`/api/position`);
+      setAllpositions(response.data)
+    } catch (error) {
+      console.log('error',error);
+    }
+    }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     try {
-      await axios.post('/api/user', { fname, lname, tel, position, datestartwork, salary })
+      await axios.post('/api/user', { fname, lname, tel, positionId, datestartwork, salary })
       router.push('/setting/user')
     } catch (error) {
       console.error(error)
     }
   }
+  useEffect(() => {
+    fetchPosition()
+  }, [])
+  
 
   
   return (
@@ -82,14 +94,15 @@ const Create = () => {
               ตำแหน่งงาน
             </label>
             <div className="mt-2.5">
-              <input
-                type="text"
-                name="position"
-                id="position"
-                onChange={(e:any)=>setposition(e.target.value)}
-                required
-                className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
+              <select
+                title='position'
+                value={positionId}
+                onChange={(e) => setpositionId(e.target.value)}
+                className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Select position</option>
+                {allPositon.map((pos:any)=><option value={pos.id}>{pos.name}</option>)}
+              </select>
             </div>
           </div>
           <div className="sm:col-span-2">

@@ -8,17 +8,17 @@ const prisma = new PrismaClient()
 export async function GET(req:Request,{params}:{params:{id:string}}){
     const userid = Number(params.id)
     const user:any|null = await prisma.user.findUnique({
-        where:{id:userid}
+        include: {
+            position: true, // Include category data in the response
+          },
+          where:{id:userid}
     })
-    
-    
-    
     return Response.json(user)
 }
 
 export async function PUT(req:Request,{params}:{params:{id:string}}){
     try {
-        const {fname,lname,tel,position,salary,datestartwork} = await req.json()
+        const {fname,lname,tel,positionId,salary,datestartwork} = await req.json()
         const userid = Number(params.id)
         const updateuser = await prisma.user.update({
             where:{id:userid},
@@ -26,7 +26,7 @@ export async function PUT(req:Request,{params}:{params:{id:string}}){
                 fname,
                 lname,
                 tel,
-                position,
+                positionId,
                 datestartwork,
                 salary
             }

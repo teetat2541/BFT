@@ -9,6 +9,7 @@ export default function Home() {
   const [user,setuser] = useState([])
   const [search, setsearch] = useState('')
   const [position, setposition] = useState('')
+  const [allPositon, setAllposition] = useState([])
   const [sort, setsort] = useState('desc')  
 
 
@@ -24,8 +25,19 @@ export default function Home() {
     console.log('error',error);
   }
   }
+  const fetchPosition = async() =>{
+    try {
+      
+        const response = await axios.get(`/api/position`);
+      setAllposition(response.data)
+    } catch (error) {
+      console.log('error',error);
+    }
+    }
+
   useEffect(() => {
     fetchUser();
+    fetchPosition();
   }, [])
   const handleSearch=()=>{
     fetchUser()
@@ -52,9 +64,8 @@ export default function Home() {
             className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Select position</option>
-            <option value="ฝ่ายขาย">ฝ่ายขาย</option>
-            <option value="คนขายขนมปัง">คนขายขนมปัง</option>
-            <option value="superviser">superviser</option>
+            {allPositon.map((pos:any)=><option value={pos.name}>{pos.name}</option>)}
+
           </select>
           <select
           title='sort'
@@ -124,7 +135,7 @@ export default function Home() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900">
-                    {user.position}
+                    {user.position.name}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

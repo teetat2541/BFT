@@ -14,19 +14,27 @@ datasource db {
 }
 
 model user {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   fname         String
   lname         String
   tel           String
-  position      String
-  datestartwork DateTime? @db.Date
+  positionId    Int
+  position      position  @relation(fields: [positionId], references: [id])
+  datestartwork DateTime @db.Date
   salary        Int?
 }
+
+model position {
+  id    Int    @id @default(autoincrement())
+  name  String
+  users user[]
+}
+
 model building {
-  id              Int      @id @default(autoincrement())   
-  b_type          String
-  b_name          String
-  b_subdistrict   String
-  b_district      String
-  b_province      String
+  id            Int    @id @default(autoincrement())
+  b_type        String
+  b_name        String
+  b_subdistrict String
+  b_district    String
+  b_province    String
 }

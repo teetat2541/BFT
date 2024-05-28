@@ -2,26 +2,20 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { parseDate } from '@mobiscroll/react'
 
 
 const Edit = ({ params }: { params: { id: any } }) => {
     const [fname, setfname] = useState('')
     const [lname, setlname] = useState('')
     const [tel, settel] = useState('')
-    const [position, setposition] = useState('')
+    const [positionId, setpositionId] = useState('')
+    const [allPosition, setAllposition] = useState([])
     const [datestartwork, setdatestartwork] = useState()
     const [salary, setsalary] = useState()
     const router = useRouter()
     const { id } = params
     //const [data, setdata] = useState<any>([]);
-    const multipleData = [
-      { text: 'Camera & Photo', group: 'Electronics', value: 1 },
-      { text: 'Cell Phones & Accessories', group: 'Electronics', value: 2 },
-      { text: 'GPS & Navigation', group: 'Electronics', value: 3 },
-      { text: 'Plugs and Outlets', group: 'Smart Home', value: 4 },
-      { text: 'Heating and Cooling', group: 'Smart Home', value: 5 },
-      { text: 'Detectors and Sensors', group: 'Smart Home', value: 6 },
-    ];
   
   const fetchPost = async (id: Number) => {
     try {
@@ -31,8 +25,8 @@ const Edit = ({ params }: { params: { id: any } }) => {
         setfname(res.data.fname),
         setlname(res.data.lname),
         settel(res.data.tel),
-        setposition(res.data.position),
-        setdatestartwork(res.data.datestartwork)
+        setpositionId(res.data.positionId||''),
+        setdatestartwork(res.data.datestartwork),
         setsalary(res.data.salary)
       
       
@@ -40,21 +34,33 @@ const Edit = ({ params }: { params: { id: any } }) => {
       console.log(error)
     }
   }
+  const fetchPosition = async() =>{
+    try {
+      
+        const response = await axios.get(`/api/position`);
+        setAllposition(response.data)
+    } catch (error) {
+      console.log('error',error);
+    }
+    }
 
   useEffect(() => {
     if (id) {
       fetchPost(parseInt(id))
+      fetchPosition()
     }
   }, [id])
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      const numPositinId = parseInt(positionId)
+      
       await axios.put(`/api/user/${id}`, {
         fname,
         lname,
         tel,
-        position,
+        positionId:numPositinId,
         datestartwork,
         salary
       })
@@ -101,21 +107,28 @@ const Edit = ({ params }: { params: { id: any } }) => {
             </div>
             <div className='space-x-5'>
               ตำแหน่ง
-              <input 
-              className='border-solid border-2 border-black ml-3 space-x-5' 
-              title='position'
-              value={position}
-              onChange={(e:any)=>setposition(e.target.value)}
-              />
+            <select
+            title='position'
+            key={positionId}
+            value={positionId}
+            onChange={(e) => setpositionId(e.target.value)}
+            className="space-x-5 px-4 py-2 border rounded-md focus:outline-none border-2 border-black focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">Select position</option>
+            {allPosition.map((pos:any)=><option value={pos.id}>{pos.name}</option>)}
+
+          </select>
             </div>
             <div className='space-x-5'>
               <label>วันที่เริ่มงาน</label> 
               <input 
-              type='date'
+              
+              value={datestartwork}
               className='border-solid border-2 border-black ml-3 space-x-5' 
               title='datestartwork'
-              onChange={(e:any)=>setdatestartwork(e.target.valueAsDate)}
+              onChange={(e:any)=>setdatestartwork(e.target.value)}
               />
+                 ปี-เดือน-วัน xxxx-xx-xxT00:00:00.000Z'
             </div>
             <div className='space-x-5'>
               เงินเดือน
