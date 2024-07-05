@@ -6,23 +6,38 @@ import { url } from 'inspector';
 
 
 export default function Home() {
-
-const [repairplace,setrepairplace] = useState('');
-const [repairdetail,setrepairdetail] = useState('');
-const [damageimage,setdamageimage] = useState([]);
+const building = [
+    {id:1,name:'ใบบัว'},
+    {id:2,name:'ไชยรัช'},
+    {id:3,name:'PK53'},
+    {id:4,name:'อิอิ'}
+]
+const [repair,setrepair] = useState([{
+    repairplace:'',
+    repairdetail:'',
+    image:''
+}])
 
 const handleCheck = (index:number,e:any,selected:any)=>{
     console.log(index,e.target.value,selected)
-    let temp = repairplace,repairdetail,damageimage
+    let temp = [...repair]
     temp[(index as number)][(selected as "repairplace" | "repairdetail"|"image")] = e.target.value;
     setrepair(temp);
 }
 const handleNewRow =()=>{
-    setrepair(repairplace:'')
+    setrepair([...repair,{
+        repairplace:'',
+        repairdetail:'',
+        image:'',
+    }
+    ])
 }
 const handleSubmit =(e:any)=>{
     e.preventDefault()
     console.log(repair)
+    if(!repair){
+        alert('โปรดใส่ข้อมูลให้ครบ')
+    }
     setrepair([{
         repairplace:'',
         repairdetail:'',

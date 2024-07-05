@@ -25,6 +25,14 @@ export default function Home() {
     console.log('error',error);
   }
   }
+  const deleteUser = async (id:number) => {
+    try {
+      await axios.delete(`/api/user/${id}`)
+      fetchUser()
+    } catch (error) {
+      console.error('Failed to delete the post', error)
+    }
+  }
   const fetchPosition = async() =>{
     try {
       
@@ -150,7 +158,9 @@ export default function Home() {
                   >
                     Edit
                   </Link>
-                  <button className="text-red-600 hover:text-red-900">
+                  <button 
+                  onClick={deleteUser}
+                  className="text-red-600 hover:text-red-900">
                     Delete
                   </button>
                 </td>

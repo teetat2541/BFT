@@ -31,10 +31,58 @@ model position {
 }
 
 model building {
-  id            Int    @id @default(autoincrement())
+  id            Int  @id @default(autoincrement())
   b_type        String
   b_name        String
-  b_subdistrict String
-  b_district    String
-  b_province    String
+  repairs       repair[]
+  productTransactions productTransaction[]
 }
+
+model repair {
+  id                Int    @id @default(autoincrement())
+  createdAt         DateTime  @default(now())
+  buildingId        Int
+  building          building  @relation(fields: [buildingId], references: [id])
+  problem_img       String
+  problem_place     String
+  problem_detail    String
+  status            Status    @default(inProgress)
+  updatedAt         DateTime  @updatedAt
+  rp_img            String?
+}
+enum Status {
+  inProgress
+  completed
+  cancelled
+}
+model supplier {
+  id            Int    @id @default(autoincrement()) 
+  s_name        String
+  line          String
+  tel           String
+  productTransactions productTransaction[]
+}
+model product {
+  id            Int    @id @default(autoincrement())
+  p_type        String
+  p_name        String
+  productTransactions productTransaction[]
+}
+
+model productTransaction {
+  id                Int    @id @default(autoincrement())
+  date              DateTime  @default(now())
+  supplierId        Int
+  supplier          supplier  @relation(fields: [supplierId], references: [id])
+  buildingId        Int
+  building          building  @relation(fields: [buildingId], references: [id])
+  productId         Int
+  product           product  @relation(fields: [productId], references: [id])
+  transactiontype   transactiontype
+  quantity          Int
+}
+enum transactiontype {
+  add
+  withdraw
+}
+
